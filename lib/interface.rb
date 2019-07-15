@@ -5,7 +5,8 @@ class Interface
     end
   end
 
-  def print_message(balance, item)
+  def print_message(item)
+    balance = item[:balance]
     case
     when balance == 0
       puts item[:name]

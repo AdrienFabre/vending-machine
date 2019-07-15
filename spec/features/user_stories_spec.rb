@@ -21,11 +21,45 @@ Green Smoothie £3.00
   context 'when the machine receives the right amount of money' do
     it 'displays the selected item' do
       item = 'Orange Juice'
-      inserted_money = 2
-      expect { vending_machine.select_item(item, inserted_money) }.to output(
-        'Orange Juice
+      money = 2
+      vending_machine.select_item(item)
+      expect { vending_machine.insert_money(money) }.to output('Orange Juice
+')
+        .to_stdout
+    end
+  end
+
+  context 'when the machine receives the right amount of money in 2 times' do
+    it 'displays the selected item' do
+      item = 'Orange Juice'
+      money = 1
+      vending_machine.select_item(item)
+      expect { vending_machine.insert_money(money) }.to output(
+        '£1.00 is missing!
 '
       )
+        .to_stdout
+      expect { vending_machine.insert_money(money) }.to output('Orange Juice
+')
+        .to_stdout
+    end
+  end
+
+  context 'when the machine receives a new order after an uncompleted order' do
+    it 'displays the selected item' do
+      item_1 = 'Orange Juice'
+      money_1 = 1
+      vending_machine.select_item(item_1)
+      expect { vending_machine.insert_money(money_1) }.to output(
+        '£1.00 is missing!
+'
+      )
+        .to_stdout
+      item_2 = 'Green Smoothie'
+      money_2 = 3
+      vending_machine.select_item(item_2)
+      expect { vending_machine.insert_money(money_2) }.to output('Green Smoothie
+')
         .to_stdout
     end
   end
@@ -33,8 +67,9 @@ Green Smoothie £3.00
   context 'when the machine receives not enough money' do
     it 'displays the missing money message' do
       item = 'Orange Juice'
-      inserted_money = 1
-      expect { vending_machine.select_item(item, inserted_money) }.to output(
+      money = 1
+      vending_machine.select_item(item)
+      expect { vending_machine.insert_money(money) }.to output(
         '£1.00 is missing!
 '
       )
@@ -45,8 +80,9 @@ Green Smoothie £3.00
   context 'when the machine receives too much money' do
     it 'displays here is your change message' do
       item = 'Orange Juice'
-      inserted_money = 3
-      expect { vending_machine.select_item(item, inserted_money) }.to output(
+      money = 3
+      vending_machine.select_item(item)
+      expect { vending_machine.insert_money(money) }.to output(
         'Here is your change: £1.00
 '
       )

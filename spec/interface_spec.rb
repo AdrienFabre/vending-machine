@@ -21,33 +21,29 @@ Green Smoothie £3.00
 
   context 'receive a balance = 0' do
     it 'displays the selected item' do
-      balance = 0
       item = items[0]
-      expect { interface.print_message(balance, item) }.to output(
-        'Orange Juice
-'
-      )
+      items[0][:balance] = 0
+      expect { interface.print_message(item) }.to output('Orange Juice
+')
         .to_stdout
     end
   end
 
   context 'receive not enough money' do
     it 'displays the missing money message' do
-      balance = -1
       item = items[0]
-      expect { interface.print_message(balance, item) }.to output(
-        '£1.00 is missing!
-'
-      )
+      items[0][:balance] = -1
+      expect { interface.print_message(item) }.to output('£1.00 is missing!
+')
         .to_stdout
     end
   end
 
   context 'receive too much money' do
     it 'displays here is your change message' do
-      balance = 1
       item = items[0]
-      expect { interface.print_message(balance, item) }.to output(
+      items[0][:balance] = 1
+      expect { interface.print_message(item) }.to output(
         'Here is your change: £1.00
 '
       )

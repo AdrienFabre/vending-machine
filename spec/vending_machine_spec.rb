@@ -19,8 +19,9 @@ describe VendingMachine do
   context 'receive the right amount of money' do
     it 'returns the selected item' do
       item = 'Orange Juice'
-      inserted_money = 2
-      expect(vending_machine.select_item(item, inserted_money)).to eq(0)
+      money = 2
+      vending_machine.select_item(item)
+      expect(vending_machine.insert_money(money)).to eq(0)
       expect(interface).to have_received(:print_message)
     end
   end
@@ -28,8 +29,9 @@ describe VendingMachine do
   context 'receive not enough money' do
     it 'returns the missing money value' do
       item = 'Orange Juice'
-      inserted_money = 1
-      expect(vending_machine.select_item(item, inserted_money)).to eq(-1)
+      money = 1
+      vending_machine.select_item(item)
+      expect(vending_machine.insert_money(money)).to eq(-1)
       expect(interface).to have_received(:print_message)
     end
   end
@@ -37,8 +39,9 @@ describe VendingMachine do
   context 'receive too much money' do
     it 'returns the change value' do
       item = 'Orange Juice'
-      inserted_money = 3
-      expect(vending_machine.select_item(item, inserted_money)).to eq(1)
+      money = 3
+      vending_machine.select_item(item)
+      expect(vending_machine.insert_money(money)).to eq(1)
       expect(interface).to have_received(:print_message)
     end
   end
