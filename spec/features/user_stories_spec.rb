@@ -58,8 +58,10 @@ Green Smoothie £3.00
       item_2 = 'Green Smoothie'
       money_2 = 3
       vending_machine.select_item(item_2)
-      expect { vending_machine.insert_money(money_2) }.to output('Green Smoothie
-')
+      expect { vending_machine.insert_money(money_2) }.to output(
+        'Green Smoothie
+'
+      )
         .to_stdout
     end
   end

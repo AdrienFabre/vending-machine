@@ -4,4 +4,6 @@ group :development, :test do
   gem 'prettier'
   gem 'rspec'
   gem 'rubocop'
+  gem 'coveralls', require: false
+
 end

@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/AdrienFabre/vending-machine.svg?branch=master)](https://travis-ci.org/AdrienFabre/vending-machine.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/AdrienFabre/bank_tech_test_ruby/badge.svg?branch=master)](https://coveralls.io/github/AdrienFabre/vending-machine?branch=master)
+
 # Vending Machine
 
 The aim of this program is to help to manage a vending machine, its products and its change.
