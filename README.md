@@ -14,7 +14,13 @@ Rspec
 bundle install
 ```
 
-## Execute Linter
+## Test
+
+```md
+rspec
+```
+
+## Execute Linter auto-correct
 
 ```md
 bundle exec rbprettier --write '**/*.rb'
