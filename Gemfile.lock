@@ -59,6 +59,7 @@ DEPENDENCIES
   prettier
   rspec
   rubocop
+  simplecov
 
 RUBY VERSION
    ruby 2.6.0p0

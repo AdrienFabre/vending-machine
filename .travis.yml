@@ -3,14 +3,10 @@ before_install:
 
 notifications:
   - false
-
 language: ruby
 rvm:
   - 2.6.0
-  - truffleruby
-
 
 script:
   - bundle exec rspec spec
-after_script:
-  - bundle exec rake coveralls:push
+
