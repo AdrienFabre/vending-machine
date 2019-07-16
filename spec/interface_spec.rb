@@ -11,9 +11,7 @@ describe Interface do
   context 'in sleep mode' do
     it 'displays the list of items' do
       expect { interface.print_items(items) }.to output(
-        'Orange Juice £2.00
-Green Smoothie £3.00
-'
+        "Orange Juice £2.00\nGreen Smoothie £3.00\n"
       )
         .to_stdout
     end
@@ -23,8 +21,7 @@ Green Smoothie £3.00
     it 'displays the selected item' do
       item = items[0]
       items[0][:balance] = 0
-      expect { interface.print_message(item) }.to output('Orange Juice
-')
+      expect { interface.print_message(item) }.to output("Orange Juice\n")
         .to_stdout
     end
   end
@@ -33,8 +30,7 @@ Green Smoothie £3.00
     it 'displays the missing money message' do
       item = items[0]
       items[0][:balance] = -1
-      expect { interface.print_message(item) }.to output('£1.00 is missing!
-')
+      expect { interface.print_message(item) }.to output("£1.00 is missing!\n")
         .to_stdout
     end
   end
@@ -44,8 +40,7 @@ Green Smoothie £3.00
       item = items[0]
       items[0][:balance] = 1
       expect { interface.print_message(item) }.to output(
-        'Here is your change: £1.00
-'
+        "Here is your change: £1.00\n"
       )
         .to_stdout
     end

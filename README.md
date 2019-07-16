@@ -1,5 +1,4 @@
 [![Coverage Status](https://coveralls.io/repos/github/AdrienFabre/vending-machine/badge.svg?branch=master)](https://coveralls.io/github/AdrienFabre/vending-machine?branch=master)
-
 [![Build Status](https://travis-ci.org/AdrienFabre/vending-machine.svg?branch=master)](https://travis-ci.org/AdrienFabre/vending-machine.svg?branch=master)
 
 # Vending Machine
@@ -22,6 +21,58 @@ bundle install
 
 ```md
 rspec
+```
+
+### Results
+
+```md
+user_stories:
+  when the machine is in sleep mode
+    displays a list of items with prices
+  when the machine receives the right amount of money
+    displays the selected item
+  when the machine receives the right amount of money in 2 times
+    displays the selected item
+  when the machine receives a new order after an uncompleted order
+    displays the selected item
+  when the machine receives not enough money
+    displays the missing money message
+  when the machine receives too much money
+    displays here is your change message
+    accepts and give the precise change
+
+Interface
+  in sleep mode
+    displays the list of items
+  receive a balance = 0
+    displays the selected item
+  receive not enough money
+    displays the missing money message
+  receive too much money
+    displays here is your change message
+
+VendingMachine
+  in sleep mode
+    returns the list as an array of hashes
+  receive the right amount of money
+    returns the selected item
+  receive not enough money
+    returns the missing money value
+  receive too much money
+    returns the change value
+    keeps track of the change
+      updates the change
+    keeps track of the items
+      updates the items
+    adds change
+      updates the change
+    add items
+      updates the items
+
+Finished in 0.00922 seconds (files took 0.13356 seconds to load)
+19 examples, 0 failures
+
+Coverage report generated for RSpec to /home/adrien/Projects/ruby/vending-machine/coverage. 178 / 178 LOC (100.0%) covered.
 ```
 
 ## Execute Linter auto-correct
@@ -77,5 +128,13 @@ As a user,
 So I can keep track of the change load,
 I want to be able to read the change load.
 
+```
+
+## Edge Cases
+
+```md
+
+The money can be inserted in several times.
+If the selection is pushed while the money is not enough, the money is kept in the machine.
 
 ```
