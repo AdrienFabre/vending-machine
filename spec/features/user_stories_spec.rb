@@ -1,3 +1,5 @@
+require 'dispenser'
+
 describe 'user_stories:' do
   items = [
     { name: 'Orange Juice', price: 2, quantity: 3 },
@@ -16,9 +18,27 @@ describe 'user_stories:' do
     '£2' => 50
   }
 
-  subject(:interface) { Interface.new }
-  subject(:vending_machine) do
-    VendingMachine.new(items: items, change: change, interface: interface)
+  change_converter = {
+    '1p' => 0.01,
+    '2p' => 0.02,
+    '5p' => 0.05,
+    '10p' => 0.1,
+    '20p' => 0.2,
+    '50p' => 0.5,
+    '£1' => 1,
+    '£2' => 2
+  }
+
+  let(:interface) { Display.new }
+  let(:dispenser) { Dispenser.new }
+  let(:vending_machine) do
+    VendingMachine.new(
+      items: items,
+      change: change,
+      interface: interface,
+      change_converter: change_converter,
+      dispenser: dispenser
+    )
   end
 
   context 'when the machine is in sleep mode' do
@@ -51,13 +71,16 @@ describe 'user_stories:' do
   end
 
   context 'when the machine receives a new order after an uncompleted order' do
-    it 'displays the selected item' do
+    it 'the inserted change is returned' do
       vending_machine.select_item('Orange Juice')
       expect { vending_machine.insert_money('£1') }.to output(
         "£1.00 is missing!\n"
       )
         .to_stdout
-      vending_machine.select_item('Orange Juice')
+      expect { vending_machine.select_item('Orange Juice') }.to output(
+        "Here is your change: £1.00\n"
+      )
+        .to_stdout
       expect { vending_machine.insert_money('£2') }.to output("Orange Juice\n")
         .to_stdout
     end

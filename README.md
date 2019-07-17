@@ -3,7 +3,45 @@
 
 # Vending Machine
 
-The aim of this program is to help to manage a vending machine, its products and its change.
+The aim of this program is to help customers and managers to use the vending machine.
+
+I decided to create the 3 classes you can see below. I have experimented different designs using sequence diagrams and class diagrams in order to simplify the Vending Machine class. I arrived to the conclusion that if I want greatly improve the design I would perfect a design first and then redo it. The current program works, is tested and satisfies all the requirements.
+
+```md
+Vending Machine
+  attributes
+  - items
+  - change
+  - display
+  - dispenser
+  - change_converter
+  - order
+  public methods
+  - show_items
+  - select_item(item)
+  - insert_money(coin)
+  - add_change(new_change)
+  - add_items(name, quantity)
+
+Display
+  public methods
+  - print_items(items)
+  - print_message(order)
+
+Dispenser
+  public methods
+  - dispense_change(coin)
+  - dispense_item(item)
+```
+
+
+## Requirements
+
+- Once an item is selected and the appropriate amount of money is inserted, the vending machine returns the correct product.
+- It returns change if too much money is provided, or ask for more money if insufficient funds have been inserted.
+- The machine takes an initial load of products and change. The change will be of denominations 1p, 2p, 5p, 10p, 20p, 50p, £1, £2.
+- There is a way of reloading either products or change at a later point.
+- The machine keeps track of the products and change that it contains.
 
 ## Technology
 
@@ -26,22 +64,7 @@ rspec
 ### Results
 
 ```md
-user_stories:
-  when the machine is in sleep mode
-    displays a list of items with prices
-  when the machine receives the right amount of money
-    displays the selected item
-  when the machine receives the right amount of money in 2 times
-    displays the selected item
-  when the machine receives a new order after an uncompleted order
-    displays the selected item
-  when the machine receives not enough money
-    displays the missing money message
-  when the machine receives too much money
-    displays here is your change message
-    accepts and give the precise change
-
-Interface
+Display
   in sleep mode
     displays the list of items
   receive a balance = 0
@@ -50,6 +73,21 @@ Interface
     displays the missing money message
   receive too much money
     displays here is your change message
+
+user_stories:
+  when the machine is in sleep mode
+    displays a list of items with prices
+  when the machine receives the right amount of money
+    displays the selected item
+  when the machine receives the right amount of money in 2 times
+    displays the selected item
+  when the machine receives a new order after an uncompleted order
+    the inserted change is returned
+  when the machine receives not enough money
+    displays the missing money message
+  when the machine receives too much money
+    displays here is your change message
+    accepts and gives the precise change
 
 VendingMachine
   in sleep mode
@@ -60,19 +98,21 @@ VendingMachine
     returns the missing money value
   receive too much money
     returns the change value
-    keeps track of the change
-      updates the change
-    keeps track of the items
-      updates the items
-    adds change
-      updates the change
-    add items
-      updates the items
+  when the machine receives a new order after an uncompleted order
+    the inserted change is returned
+  keeps track of the change
+    updates the change
+  keeps track of the items
+    updates the items
+  adds change
+    updates the change
+  add items
+    updates the items
 
-Finished in 0.00922 seconds (files took 0.13356 seconds to load)
-19 examples, 0 failures
+Finished in 0.01079 seconds (files took 0.13595 seconds to load)
+20 examples, 0 failures
 
-Coverage report generated for RSpec to /home/adrien/Projects/ruby/vending-machine/coverage. 178 / 178 LOC (100.0%) covered.
+Coverage report generated for RSpec to /home/adrien/Projects/ruby/vending-machine/coverage. 206 / 206 LOC (100.0%) covered.
 ```
 
 ## Execute Linter auto-correct
@@ -133,8 +173,7 @@ I want to be able to read the change load.
 ## Edge Cases
 
 ```md
-
 The money can be inserted in several times.
-If the selection is pushed while the money is not enough, the money is kept in the machine.
+If the select_item is used while the money is not enough, the money in the machine is dispensed to the user.
 
 ```

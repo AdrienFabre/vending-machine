@@ -1,39 +1,36 @@
 class VendingMachine
-  attr_accessor :items, :interface, :selection, :change
-  attr_reader :convert_to_value
+  attr_accessor :items, :display, :order, :change, :dispenser
+  attr_reader :change_converter
   def initialize(args)
     @items = args[:items]
-    @interface = args[:interface] || Interface.new
     @change = args[:change]
-    @selection = { name: nil, price: nil, balance: 0 }
-    @convert_to_value = {
-      '1p' => 0.01,
-      '2p' => 0.02,
-      '5p' => 0.05,
-      '10p' => 0.1,
-      '20p' => 0.2,
-      '50p' => 0.5,
-      '£1' => 1,
-      '£2' => 2
-    }
+    @display = args[:display] || Display.new
+    @dispenser = args[:dispenser] || Dispenser.new
+    @change_converter = args[:change_converter]
+    @order = { name: nil, price: nil, balance: 0 }
   end
 
   def show_items
-    interface.print_items(items)
+    display.print_items(items)
     items
   end
 
   def select_item(item_selected)
-    selection[:balance] = 0
-    update_selection(item_selected)
+    if order[:balance] != 0
+      order[:balance] = order[:balance].abs
+      display.print_message(order)
+      dispense_change(order[:balance])
+      order[:balance] = 0
+    end
+    update_order(item_selected)
   end
 
   def insert_money(coin)
     update_change(coin)
-    update_balance(convert_to_value[coin])
-    interface.print_message(selection)
-    validate_order if selection[:balance].positive?
-    selection[:balance]
+    update_balance(coin)
+    display.print_message(order)
+    dispense_order if order[:balance] >= 0
+    order[:balance]
   end
 
   def add_change(new_change)
@@ -46,11 +43,11 @@ class VendingMachine
 
   private
 
-  def update_selection(item_selected)
+  def update_order(item_selected)
     items.each do |item|
       if item[:name] == item_selected
-        selection[:name] = item[:name]
-        selection[:price] = item[:price]
+        order[:name] = item_selected
+        order[:price] = item[:price]
       end
     end
   end
@@ -59,28 +56,31 @@ class VendingMachine
     change[coin] += 1
   end
 
-  def update_balance(money)
-    if selection[:balance].zero?
-      selection[:balance] = money - selection[:price]
-    elsif selection[:balance].negative?
-      selection[:balance] += money
+  def update_balance(coin)
+    value = change_converter[coin]
+    if order[:balance].zero?
+      order[:balance] = value - order[:price]
+    else
+      order[:balance] += value
     end
   end
 
-  def validate_order
-    calculate_change(selection[:balance])
-    update_items(selection[:name])
+  def dispense_order
+    dispense_change(order[:balance]) if order[:balance].positive?
+    dispenser.dispense_item(order[:name])
+    update_items(order[:name])
   end
 
-  def calculate_change(money_due)
-    coins = %w[£2 £1 50p 20p 10p 5p 2p 1p]
-    values = [2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01]
+  def dispense_change(money_due)
+    coins = change_converter.keys.reverse
+    values = change_converter.values.reverse
     values.each_with_index do |value, index|
       while money_due >= value
-        if money_due % value >= 0
-          change[coins[index]] -= 1
-          money_due -= value
-        end
+        next if (money_due % value).negative?
+
+        change[coins[index]] -= 1
+        dispenser.dispense_change(change[coins[index]])
+        money_due -= value
       end
     end
   end

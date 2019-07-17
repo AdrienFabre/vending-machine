@@ -1,17 +1,18 @@
-require 'interface'
+require 'display'
 
-describe Interface do
+describe Display do
   items = [
-    { name: 'Orange Juice', price: 2 },
-    { name: 'Green Smoothie', price: 3 }
+    { name: 'Orange Juice', price: 2, quantity: 3 },
+    { name: 'Green Smoothie', price: 3, quantity: 5 },
+    { name: 'Chocolate Bar', price: 4, quantity: 7 }
   ]
 
-  subject(:interface) { described_class.new }
+  subject(:display) { described_class.new }
 
   context 'in sleep mode' do
     it 'displays the list of items' do
-      expect { interface.print_items(items) }.to output(
-        "Orange Juice £2.00\nGreen Smoothie £3.00\n"
+      expect { display.print_items(items) }.to output(
+        "Orange Juice £2.00\nGreen Smoothie £3.00\nChocolate Bar £4.00\n"
       )
         .to_stdout
     end
@@ -21,7 +22,7 @@ describe Interface do
     it 'displays the selected item' do
       item = items[0]
       items[0][:balance] = 0
-      expect { interface.print_message(item) }.to output("Orange Juice\n")
+      expect { display.print_message(item) }.to output("Orange Juice\n")
         .to_stdout
     end
   end
@@ -30,7 +31,7 @@ describe Interface do
     it 'displays the missing money message' do
       item = items[0]
       items[0][:balance] = -1
-      expect { interface.print_message(item) }.to output("£1.00 is missing!\n")
+      expect { display.print_message(item) }.to output("£1.00 is missing!\n")
         .to_stdout
     end
   end
@@ -39,7 +40,7 @@ describe Interface do
     it 'displays here is your change message' do
       item = items[0]
       items[0][:balance] = 1
-      expect { interface.print_message(item) }.to output(
+      expect { display.print_message(item) }.to output(
         "Here is your change: £1.00\n"
       )
         .to_stdout
