@@ -46,4 +46,19 @@ describe Display do
         .to_stdout
     end
   end
+
+  context 'is asked to print report' do
+    items_report = [
+      { name: 'Orange Juice', sales: 2 },
+      { name: 'Chocolate Bar', sales: 2 },
+      { name: 'Banana', sales: 1 }
+    ]
+
+    it 'displays the report' do
+      expect { display.print_report(items_report) }.to output(
+        "Orange Juice, Chocolate Bar, Banana\n"
+      )
+        .to_stdout
+    end
+  end
 end

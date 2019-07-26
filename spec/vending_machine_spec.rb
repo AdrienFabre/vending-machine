@@ -41,7 +41,9 @@ describe VendingMachine do
   let(:dispenser) do
     double :dispenser, dispense_item: nil, dispense_change: nil
   end
-  let(:display) { double :display, print_items: nil, print_message: nil }
+  let(:display) do
+    double :display, print_items: nil, print_message: nil, print_report: nil
+  end
   context 'in sleep mode' do
     it 'returns the list as an array of hashes' do
       expect(vending_machine.show_items).to eq(items)
@@ -77,18 +79,32 @@ describe VendingMachine do
     end
   end
 
-    context 'when the machine receives a new order after an uncompleted order' do
-      it 'the inserted change is returned' do
-        vending_machine.select_item('Orange Juice')
-        vending_machine.insert_money('£1')
-        vending_machine.select_item('Orange Juice')
-        expect(dispenser).to have_received(:dispense_change)
-      end
+  context 'when the machine receives a new order after an uncompleted order' do
+    it 'the inserted change is returned' do
+      vending_machine.select_item('Orange Juice')
+      vending_machine.insert_money('£1')
+      vending_machine.select_item('Orange Juice')
+      expect(dispenser).to have_received(:dispense_change)
     end
+  end
 
-    context 'keeps track of the change' do
-      it 'updates the change' do
-        vending_machine.change = {
+  context 'keeps track of the change' do
+    it 'updates the change' do
+      vending_machine.change = {
+        '1p' => 50,
+        '2p' => 50,
+        '5p' => 50,
+        '10p' => 50,
+        '20p' => 50,
+        '50p' => 50,
+        '£1' => 50,
+        '£2' => 50
+      }
+      vending_machine.select_item('Orange Juice')
+      vending_machine.insert_money('£1')
+      expect(vending_machine.insert_money('£2')).to eq(1)
+      expect(vending_machine.change).to eq(
+        {
           '1p' => 50,
           '2p' => 50,
           '5p' => 50,
@@ -96,44 +112,29 @@ describe VendingMachine do
           '20p' => 50,
           '50p' => 50,
           '£1' => 50,
-          '£2' => 50
+          '£2' => 51
         }
-        vending_machine.select_item('Orange Juice')
-        vending_machine.insert_money('£1')
-        expect(vending_machine.insert_money('£2')).to eq(1)
-        expect(vending_machine.change).to eq(
-          {
-            '1p' => 50,
-            '2p' => 50,
-            '5p' => 50,
-            '10p' => 50,
-            '20p' => 50,
-            '50p' => 50,
-            '£1' => 50,
-            '£2' => 51
-          }
-        )
-      end
+      )
     end
-    context 'keeps track of the items' do
-      it 'updates the items' do
-        vending_machine.items = [
-          { name: 'Orange Juice', price: 2, quantity: 3 },
+  end
+  context 'keeps track of the items' do
+    it 'updates the items' do
+      vending_machine.items = [
+        { name: 'Orange Juice', price: 2, quantity: 3 },
+        { name: 'Green Smoothie', price: 3, quantity: 5 },
+        { name: 'Chocolate Bar', price: 4, quantity: 7 }
+      ]
+      vending_machine.select_item('Orange Juice')
+      vending_machine.insert_money('£1')
+      expect(vending_machine.insert_money('£2')).to eq(1)
+      expect(vending_machine.items).to eq(
+        [
+          { name: 'Orange Juice', price: 2, quantity: 2 },
           { name: 'Green Smoothie', price: 3, quantity: 5 },
           { name: 'Chocolate Bar', price: 4, quantity: 7 }
         ]
-        vending_machine.select_item('Orange Juice')
-        vending_machine.insert_money('£1')
-        expect(vending_machine.insert_money('£2')).to eq(1)
-        expect(vending_machine.items).to eq(
-          [
-            { name: 'Orange Juice', price: 2, quantity: 2 },
-            { name: 'Green Smoothie', price: 3, quantity: 5 },
-            { name: 'Chocolate Bar', price: 4, quantity: 7 }
-          ]
-        )
-      end
-    
+      )
+    end
   end
   context 'adds change' do
     it 'updates the change' do
@@ -185,6 +186,47 @@ describe VendingMachine do
           { name: 'Orange Juice', price: 2, quantity: 3 },
           { name: 'Green Smoothie', price: 3, quantity: 5 },
           { name: 'Chocolate Bar', price: 4, quantity: 17 }
+        ]
+      )
+    end
+  end
+
+  items_popularity = [
+    { name: 'Orange Juice', price: 2, quantity: 10 },
+    { name: 'Green Smoothie', price: 2, quantity: 10 },
+    { name: 'Chocolate Bar', price: 2, quantity: 10 },
+    { name: 'Croissant', price: 2, quantity: 10 },
+    { name: 'Hot chocolate', price: 2, quantity: 10 },
+    { name: 'Banana', price: 2, quantity: 10 }
+  ]
+
+  describe 'gives the sales report' do
+    let(:vending_machine) do
+      VendingMachine.new(
+        items: items_popularity,
+        change: change,
+        display: display,
+        change_converter: change_converter,
+        dispenser: dispenser
+      )
+    end
+
+    it 'return the items with their number of sales' do
+      vending_machine.select_item('Orange Juice')
+      vending_machine.insert_money('£2')
+      vending_machine.select_item('Orange Juice')
+      vending_machine.insert_money('£2')
+      vending_machine.select_item('Chocolate Bar')
+      vending_machine.insert_money('£2')
+      vending_machine.select_item('Chocolate Bar')
+      vending_machine.insert_money('£2')
+      vending_machine.select_item('Banana')
+      vending_machine.insert_money('£2')
+      expect(vending_machine.sales_report).to eq(
+        [
+          { name: 'Orange Juice', sales: 2 },
+          { name: 'Chocolate Bar', sales: 2 },
+          { name: 'Banana', sales: 1 }
         ]
       )
     end

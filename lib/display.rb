@@ -18,6 +18,12 @@ class Display
     end
   end
 
+  def print_report(report)
+    printed_report = ''
+    report.each { |item| printed_report += item[:name] + ', ' }
+    puts printed_report.chop.chop
+  end
+
   private
 
   def convert_to_price(value)

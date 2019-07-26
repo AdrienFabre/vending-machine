@@ -1,5 +1,5 @@
 class VendingMachine
-  attr_accessor :items, :display, :order, :change, :dispenser
+  attr_accessor :items, :display, :order, :change, :dispenser, :sales_history
   attr_reader :change_converter
   def initialize(args)
     @items = args[:items]
@@ -8,6 +8,7 @@ class VendingMachine
     @dispenser = args[:dispenser] || Dispenser.new
     @change_converter = args[:change_converter]
     @order = { name: nil, price: nil, balance: 0 }
+    @sales_history = []
   end
 
   def show_items
@@ -41,6 +42,11 @@ class VendingMachine
     items.each { |item| item[:quantity] += quantity if item[:name] == name }
   end
 
+  def sales_report
+    display.print_report(sales_history)
+    sales_history
+  end
+
   private
 
   def update_order(item_selected)
@@ -69,6 +75,21 @@ class VendingMachine
     dispense_change(order[:balance]) if order[:balance].positive?
     dispenser.dispense_item(order[:name])
     update_items(order[:name])
+    record_sale
+  end
+
+  def record_sale
+    old_sale =
+      sales_history.detect { |old_sales| old_sales[:name] == order[:name] }
+
+    if old_sale
+      old_sale[:sales] += 1
+    else
+      sales = Hash.new(0)
+      sales[:name] = order[:name]
+      sales[:sales] += 1
+      sales_history << sales
+    end
   end
 
   def dispense_change(money_due)

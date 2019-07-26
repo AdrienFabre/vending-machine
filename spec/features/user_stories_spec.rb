@@ -29,13 +29,13 @@ describe 'user_stories:' do
     '£2' => 2
   }
 
-  let(:interface) { Display.new }
+  let(:display) { Display.new }
   let(:dispenser) { Dispenser.new }
   let(:vending_machine) do
     VendingMachine.new(
       items: items,
       change: change,
-      interface: interface,
+      display: display,
       change_converter: change_converter,
       dispenser: dispenser
     )
@@ -127,6 +127,48 @@ describe 'user_stories:' do
 
       expect { vending_machine.insert_money('£2') }.to output(
         "Here is your change: £1.70\n"
+      )
+        .to_stdout
+    end
+  end
+
+  items_popularity = [
+    { name: 'Orange Juice', price: 2, quantity: 10 },
+    { name: 'Green Smoothie', price: 2, quantity: 10 },
+    { name: 'Chocolate Bar', price: 2, quantity: 10 },
+    { name: 'Croissant', price: 2, quantity: 10 },
+    { name: 'Hot chocolate', price: 2, quantity: 10 },
+    { name: 'Banana', price: 2, quantity: 10 }
+  ]
+
+  context 'when I want analyse my sales' do
+    let(:vending_machine) do
+      VendingMachine.new(
+        items: items_popularity,
+        change: change,
+        display: display,
+        change_converter: change_converter,
+        dispenser: dispenser
+      )
+    end
+    it 'displays the top 3 most popular items' do
+      vending_machine.select_item('Orange Juice')
+      expect { vending_machine.insert_money('£2') }.to output("Orange Juice\n")
+        .to_stdout
+      vending_machine.select_item('Orange Juice')
+      expect { vending_machine.insert_money('£2') }.to output("Orange Juice\n")
+        .to_stdout
+      vending_machine.select_item('Chocolate Bar')
+      expect { vending_machine.insert_money('£2') }.to output("Chocolate Bar\n")
+        .to_stdout
+      vending_machine.select_item('Chocolate Bar')
+      expect { vending_machine.insert_money('£2') }.to output("Chocolate Bar\n")
+        .to_stdout
+      vending_machine.select_item('Banana')
+      expect { vending_machine.insert_money('£2') }.to output("Banana\n")
+        .to_stdout
+      expect { vending_machine.sales_report }.to output(
+        "Orange Juice, Chocolate Bar, Banana\n"
       )
         .to_stdout
     end
